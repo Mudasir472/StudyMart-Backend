@@ -4,20 +4,24 @@ const { INTERNAL_SERVER_ERROR, OK } = require("../utils/httpCodeStatus");
 
 const getMonthlyPayments = async (req, res) => {
     try {
+        // const { teacherId } = req.params; // Get the instructor ID from the route params
+        // console.log(teacherId);
+        const teacherId = req.user._id
+
         const { year } = req.query;
         const currentYear = year ? parseInt(year) : new Date().getFullYear();
 
         const startOfYear = new Date(currentYear, 0, 1); // January 1st
         const endOfYear = new Date(currentYear, 11, 31, 23, 59, 59); // December 31st
 
-        // Aggregate payments grouped by month
-        // Aggregate payments grouped by month and count enrollments
+        // Aggregate payments grouped by month for the specific instructor
         const [monthlyPayments, totalEarnings, totalEnrollments] = await Promise.all([
             Payment.aggregate([
                 {
                     $match: {
                         createdAt: { $gte: startOfYear, $lte: endOfYear }, // Filter by year
                         status: "success", // Consider only successful payments
+                        instructorId: teacherId, // Filter by instructor ID
                     },
                 },
                 {
@@ -35,6 +39,7 @@ const getMonthlyPayments = async (req, res) => {
                     $match: {
                         createdAt: { $gte: startOfYear, $lte: endOfYear }, // Filter by year
                         status: "success", // Consider only successful payments
+                        instructorId: teacherId, // Filter by instructor ID
                     },
                 },
                 {
@@ -48,6 +53,7 @@ const getMonthlyPayments = async (req, res) => {
                 {
                     $match: {
                         createdAt: { $gte: startOfYear, $lte: endOfYear }, // Filter by year
+                        instructorId: teacherId, // Filter by instructor ID
                     },
                 },
                 {
@@ -75,6 +81,7 @@ const getMonthlyPayments = async (req, res) => {
         }));
         const totalAmount = totalEarnings[0]?.totalAmount || 0;
         const totalEnrollmentsCount = totalEnrollments[0]?.totalEnrollments || 0;
+
         // Respond with the formatted data
         res.status(OK).json({
             data: formattedData,

@@ -25,6 +25,6 @@ router.put('/updateCource/:courseId', upload.fields([
 
 
 // Payment Router
-router.get("/monthly-payments/:teacherId", getMonthlyPayments);
+router.get("/monthly-payments/:teacherId", authenticate, getMonthlyPayments);
 
 module.exports = router;

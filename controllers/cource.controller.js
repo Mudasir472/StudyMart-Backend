@@ -34,6 +34,8 @@ module.exports.getCource = async (req, res) => {
 module.exports.enrollCource = async (req, res) => {
     const { courseId, formData } = req.body;
     const userId = req.user._id;
+    const cource = await Cource.findById(courseId)
+    const instructorId = cource.instructorId;
 
     try {
         // Find the user and course
@@ -68,9 +70,11 @@ module.exports.enrollCource = async (req, res) => {
                 userId,
                 courseId,
                 amount: course?.price,
+                instructorId: instructorId,
                 paymentMethod: formData?.paymentMethod,
                 status: "success", // Set this dynamically based on the payment gateway response
             });
+            // payment.instructorId.push
             await payment.save();
 
             // Enroll the user after successful payment
@@ -122,6 +126,7 @@ module.exports.createCource = async (req, res) => {
 
         await newCourse.save();
         instructor.courses.push(newCourse._id);
+
         await instructor.save();
 
         // Return a success response

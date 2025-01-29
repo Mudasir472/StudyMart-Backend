@@ -2,6 +2,7 @@ const Review = require("../modals/review.modal")
 
 const mongoose = require("mongoose");
 const User = require("./user.modal");
+const Payment = require("./payment.modal");
 const courseSchema = new mongoose.Schema(
     {
         title: {
@@ -79,6 +80,13 @@ courseSchema.post("findOneAndDelete", async (cource) => {
             $pull: { courses: cource._id }
         });
     }
-})
+});
+// Middleware to delete payments when a course is deleted
+courseSchema.pre("findOneAndDelete", async function (next) {
+    const courseId = this.getFilter()._id;
+    await Payment.deleteMany({ courseId });
+    next();
+});
+
 const Course = mongoose.model("Course", courseSchema);
 module.exports = Course;
