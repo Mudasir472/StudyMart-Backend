@@ -87,6 +87,5 @@ courseSchema.pre("findOneAndDelete", async function (next) {
     await Payment.deleteMany({ courseId });
     next();
 });
-
 const Course = mongoose.model("Course", courseSchema);
 module.exports = Course;
