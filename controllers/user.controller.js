@@ -156,3 +156,18 @@ module.exports.editUser = async (req, res) => {
     }
 
 }
+
+module.exports.getAllUsers = async (req, res) => {
+    try {
+        const allUsers = await User.find({});
+        res.status(OK).json({
+            message: "Fetched All users",
+            allUsers,
+            success: true
+        })
+
+    } catch (error) {
+        console.log(error);
+        res.status(INTERNAL_SERVER_ERROR).json({ message: error.message, success: false })
+    }
+}

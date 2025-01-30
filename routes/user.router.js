@@ -1,7 +1,7 @@
 // import express from 'express';
 const express = require('express')
 const router = express.Router({ mergeParams: true });
-const { createUser, userLogin, userLogout, validUser, changeProfile, editUser } = require("../controllers/user.controller");
+const { createUser, userLogin, userLogout, validUser, changeProfile, editUser, getAllUsers } = require("../controllers/user.controller");
 const authenticate = require('../middlewares/authenticate');
 
 const { storage } = require("../cloudConfig");
@@ -24,5 +24,7 @@ router.get('/validuser', authenticate, validUser);
 router.post("/edituser",authenticate,editUser);
 
 router.post("/user/changeprofile", authenticate, upload.single("profilePic"),changeProfile)
+
+router.get("/getallusers",getAllUsers);
 
 module.exports = router;
