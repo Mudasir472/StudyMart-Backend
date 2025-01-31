@@ -2,6 +2,7 @@ const Course = require('../modals/cource.model.js');
 const Cource = require('../modals/cource.model.js');
 const User = require('../modals/user.modal.js');
 const Payment = require("../modals/payment.modal.js");
+const mongoose = require('mongoose')
 const { OK, NOT_FOUND, INTERNAL_SERVER_ERROR, CONFLICT, FORBIDDEN, BAD_REQUEST, UNAUTHORIZED } = require('../utils/httpCodeStatus.js');
 
 
@@ -263,3 +264,31 @@ module.exports.updateCource = async (req, res) => {
         res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
+
+// Get courses for a specific instructor with enrollment count
+module.exports.getSelectedCources = async (req, res) => {
+    try {
+        const userId = req.user._id;
+
+        if (!userId) {
+            return res.status(400).json({ message: "User ID is required" });
+        }
+        // Convert userId to ObjectId
+        const instructorId = new mongoose.Types.ObjectId(userId);
+
+        // Find courses where the instructorId matches the given userId
+        const courses = await Course.find({ instructorId })
+            .select("category enrolled") // Get only necessary fields
+            .lean(); // Convert to plain JS object
+
+        // Format data to include enroll count
+        const formattedCourses = courses.map(course => ({
+            name: course.category,
+            enrollCount: course.enrolled.length, // Number of enrolled students
+        }));
+        res.status(OK).json(formattedCourses);
+    } catch (error) {
+        console.error("Error fetching courses:", error);
+        res.status(INTERNAL_SERVER_ERROR).json({ message: "Server error" });
+    }
+};

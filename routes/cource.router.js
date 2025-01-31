@@ -6,7 +6,7 @@ const { storage } = require("../cloudConfig.js");
 const multer = require('multer');
 const upload = multer({ storage });
 
-const { getCource, enrollCource, createCource, getVideos, deleteCource, deleteVideo, updateCource, deleteImages } = require("../controllers/cource.controller.js");
+const { getCource, enrollCource, createCource, getVideos, deleteCource, deleteVideo, updateCource, deleteImages, getSelectedCources } = require("../controllers/cource.controller.js");
 const { getMonthlyPayments } = require("../controllers/payment.controller.js");
 
 router.get("/getcourse", getCource);
@@ -23,8 +23,9 @@ router.put('/updateCource/:courseId', upload.fields([
     { name: 'videos', maxCount: 10 }
 ]), authenticate, isCourceOwner, updateCource);
 
+router.get("/courses", authenticate, getSelectedCources);
 
 // Payment Router
-router.get("/monthly-payments/:teacherId", authenticate, getMonthlyPayments);
+router.get("/monthly-payments", authenticate, getMonthlyPayments);
 
 module.exports = router;

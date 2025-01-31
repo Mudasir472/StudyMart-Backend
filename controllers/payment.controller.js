@@ -4,8 +4,6 @@ const { INTERNAL_SERVER_ERROR, OK } = require("../utils/httpCodeStatus");
 
 const getMonthlyPayments = async (req, res) => {
     try {
-        // const { teacherId } = req.params; // Get the instructor ID from the route params
-        // console.log(teacherId);
         const teacherId = req.user._id
 
         const { year } = req.query;
