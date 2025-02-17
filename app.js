@@ -16,6 +16,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
+app.get('/', (req, res) => {
+    res.send("I am listening at 5000");
+})
 // Routes defined
 const userRouter = require("./routes/user.router");
 const courceRouter = require("./routes/cource.router")
