@@ -6,11 +6,9 @@ const bodyParser = require("body-parser");
 const { connectdb } = require("./config/MongoDB")
 require('dotenv').config();
 
-
-
 // Middleware setup
 app.use(cors({
-    origin: "http://localhost:5173", // React frontend URL
+    origin: ["https://study-mart-a-learning-management-system.vercel.app/", "*", "http://localhost:5173"], // React frontend URL
     credentials: true,
 }));
 app.use(bodyParser.json());
