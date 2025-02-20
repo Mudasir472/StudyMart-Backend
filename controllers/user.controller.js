@@ -36,7 +36,13 @@ module.exports.createUser = async (req, res) => {
             secure: process.env.NODE_ENV === 'production'
         });
 
-        res.status(OK).json({ message: "User created successfully", user: newUser });
+        // Return token and user data in the response
+        const result = {
+            user: newUser,
+            token,
+        };
+
+        res.status(OK).json({ message: "User created successfully", result });
     } catch (error) {
         res.status(INTERNAL_SERVER_ERROR).json({ error: error.message });
     }

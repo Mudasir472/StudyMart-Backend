@@ -24,7 +24,6 @@ const userRouter = require("./routes/user.router");
 const courceRouter = require("./routes/cource.router")
 const reviewRouter = require("./routes/review.router")
 const instructorRouter = require("./routes/instructor.router")
-const ApiOpenAI = require("./openAI/Huggingface.js")
 
 // Mongo connection
 connectdb(process.env.MONGO_URI);
@@ -34,7 +33,6 @@ app.use("/", userRouter)
 app.use("/", courceRouter)
 app.use("/", reviewRouter)
 app.use("/", instructorRouter)
-app.use("/", ApiOpenAI)
 
 
 const port = process.env.PORT || 5000;
