@@ -1,7 +1,7 @@
 // import express from 'express';
 const express = require('express')
 const router = express.Router({ mergeParams: true });
-const { createUser, userLogin, userLogout, validUser, changeProfile, editUser, getAllUsers } = require("../controllers/user.controller");
+const { createUser, userLogin, userLogout, validUser, changeProfile, editUser, getAllUsers, googleAuth } = require("../controllers/user.controller");
 const authenticate = require('../middlewares/authenticate');
 
 const { storage } = require("../cloudConfig");
@@ -21,10 +21,13 @@ router.get('/logout', authenticate, userLogout);
 router.get('/validuser', authenticate, validUser);
 
 // Route to edit user
-router.post("/edituser",authenticate,editUser);
+router.post("/edituser", authenticate, editUser);
 
-router.post("/user/changeprofile", authenticate, upload.single("profilePic"),changeProfile)
+router.post("/user/changeprofile", authenticate, upload.single("profilePic"), changeProfile)
 
-router.get("/getallusers",getAllUsers);
+router.get("/getallusers", getAllUsers);
+
+// Google Route
+router.get("/auth/google", googleAuth);
 
 module.exports = router;

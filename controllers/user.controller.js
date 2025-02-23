@@ -1,6 +1,10 @@
 const User = require("../modals/user.modal");
 const bcrypt = require("bcrypt");
+const axios = require('axios');
+const jwt = require('jsonwebtoken');
+
 const { OK, INTERNAL_SERVER_ERROR, NOT_FOUND, BAD_REQUEST, UNAUTHORIZED, CONFLICT } = require("../utils/httpCodeStatus");
+const { oauth2Client } = require("../utils/googleClient");
 
 module.exports.createUser = async (req, res) => {
     const { fullname, email, number, password, role, confirmPassword } = req.body;
@@ -177,3 +181,48 @@ module.exports.getAllUsers = async (req, res) => {
         res.status(INTERNAL_SERVER_ERROR).json({ message: error.message, success: false })
     }
 }
+
+// For Google Auth
+/* GET Google Authentication API. */
+module.exports.googleAuth = async (req, res, next) => {
+    const code = req.query.code;
+    console.log(code);
+
+    try {
+        const googleRes = await oauth2Client.getToken(code);
+        oauth2Client.setCredentials(googleRes.tokens);
+        const userRes = await axios.get(
+            `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${googleRes.tokens.access_token}`
+        );
+        const { email, name, picture } = userRes.data;
+        // console.log(userRes);
+        let user = await User.findOne({ email });
+
+        if (!user) {
+            user = await User.create({
+                fullname: name,
+                email,
+                image: {
+                    imgName: "Profile Picture", // You can use a default or dynamic value
+                    url: "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp",
+                },
+            });
+        }
+        const { _id } = user;
+        const token = jwt.sign({ _id, email },
+            process.env.MY_SECRET, {
+            expiresIn: '5d'
+        });
+        res.status(200).json({
+            message: 'success',
+            token,
+            user,
+        });
+    } catch (err) {
+        console.log(err);
+
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+};
