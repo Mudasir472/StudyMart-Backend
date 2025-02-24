@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 
 const { OK, INTERNAL_SERVER_ERROR, NOT_FOUND, BAD_REQUEST, UNAUTHORIZED, CONFLICT } = require("../utils/httpCodeStatus");
 const { oauth2Client } = require("../utils/googleClient");
+const { cloudinary } = require("../cloudConfig");
 
 module.exports.createUser = async (req, res) => {
     const { fullname, email, number, password, role, confirmPassword } = req.body;
@@ -118,12 +119,26 @@ module.exports.changeProfile = async (req, res) => {
         // Assuming req.user contains the logged-in user's information
         const userId = req.user._id;
         const filePath = req.file.path; // Path to the uploaded file
+        const public_id = req.file.filename
+
+        // Here before update a new profile letus delete the previous from cloudinary
+        const user = await User.findById(userId);
+        const deletedPublic_id = user.image.public_id;
+        if (deletedPublic_id) {
+            await cloudinary.uploader.destroy(deletedPublic_id);
+        }
 
         // Update the user's profile picture in the database
         const updatedUser = await User.findByIdAndUpdate(
             userId,
-            { 'image.url': filePath }, // Update the image URL field; adjust field as per your schema
-            { new: true } // Return the updated document
+            {
+                image: {
+                    imgName: req.file.originalname,
+                    url: filePath,
+                    public_id: public_id
+                }
+            },
+            { new: true }
         );
 
         res.status(OK).json({ message: "Profile picture updated successfully!", user: updatedUser });
@@ -202,7 +217,7 @@ module.exports.googleAuth = async (req, res, next) => {
                 fullname: name,
                 email,
                 image: {
-                    imgName: "Profile Picture", // You can use a default or dynamic value
+                    imgName: "Profile Picture",
                     url: "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp",
                 },
             });

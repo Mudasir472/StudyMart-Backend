@@ -2,9 +2,9 @@ const Course = require('../modals/cource.model.js');
 const Cource = require('../modals/cource.model.js');
 const User = require('../modals/user.modal.js');
 const Payment = require("../modals/payment.modal.js");
+const {deleteFromCloudinary} = require('../utils/cloudinaryHelper.js')
 const mongoose = require('mongoose')
 const { OK, NOT_FOUND, INTERNAL_SERVER_ERROR, CONFLICT, FORBIDDEN, BAD_REQUEST, UNAUTHORIZED } = require('../utils/httpCodeStatus.js');
-
 
 module.exports.getCource = async (req, res) => {
     try {
@@ -110,9 +110,11 @@ module.exports.createCource = async (req, res) => {
 
         // Handle images and videos paths
         const imgpath = images.map((img) => {
+
             return {
                 url: img.path,
                 filename: img.originalname,
+                public_id: img.filename
             };
         });
 
@@ -161,7 +163,6 @@ module.exports.deleteCource = async (req, res) => {
     }
 };
 
-
 module.exports.getVideos = async (req, res) => {
     try {
         const { courseId } = req.params;
@@ -181,12 +182,23 @@ module.exports.getVideos = async (req, res) => {
 module.exports.deleteVideo = async (req, res) => {
     try {
         const { courseId, videoId } = req.params;
+        // Find the course
+        const course = await Course.findById(courseId);
+        if (!course) {
+            return res.status(404).json({ error: "Course not found" });
+        }
+        // Find the video to delete
+        const video = course.videos.find((v) => v._id.toString() === videoId);
+        if (!video) {
+            return res.status(404).json({ error: "Video not found" });
+        }
+        // Delete from Cloudinary
+        await deleteFromCloudinary(video.public_id, "video");
 
         // Find the course and update the videos array
         await Course.findByIdAndUpdate(courseId, {
             $pull: { videos: { _id: videoId } },
         });
-
         res.status(OK).json({ message: 'Video removed successfully' });
     } catch (error) {
         console.error(error);
@@ -198,13 +210,27 @@ module.exports.deleteImages = async (req, res) => {
     const { courseId, imageId } = req.params;
 
     try {
+        // Find the course
+        const course = await Course.findById(courseId);
+
+        if (!course) {
+            return res.status(404).json({ message: "Course not found" });
+        }
+        // Find the image to delete
+        const image = course.images.find((img) => img._id.toString() === imageId);
+
+        if (!image) {
+            return res.status(404).json({ message: "Image not found" });
+        }
+        // Delete from Cloudinary
+        await deleteFromCloudinary(image.public_id, "image");
+
         // Remove the image from the course's image array
         const updatedCourse = await Course.findByIdAndUpdate(
             courseId,
             { $pull: { images: { _id: imageId } } },
             { new: true }
         );
-
         res.status(OK).json({ message: 'Image removed successfully', updatedCourse });
     } catch (error) {
         console.error(error);
@@ -233,7 +259,9 @@ module.exports.updateCource = async (req, res) => {
             const newVideos = req.files.videos.map((vid) => ({
                 videoPath: vid.path,
                 title: vid.originalname.substring(0, 28),
+                public_id: vid.filename
             }));
+
             videoPath = [...videoPath, ...newVideos]; // Append new videos to existing ones
         }
 
@@ -242,7 +270,7 @@ module.exports.updateCource = async (req, res) => {
             const newImages = req.files.images.map((img) => ({
                 url: img.path,
                 filename: img.originalname,
-
+                public_id: img.filename
             }));
 
             imagePath = [...imagePath, ...newImages]; // Append new images to existing ones
@@ -260,7 +288,6 @@ module.exports.updateCource = async (req, res) => {
         }
         res.status(OK).json({ message: "Course updated successfully", updatedCource });
     } catch (error) {
-        console.log(error)
         res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }

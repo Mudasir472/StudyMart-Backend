@@ -71,6 +71,9 @@ const userSchema = new Schema({
         url: {
             default: "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp",
             type: String,
+        },
+        public_id: {
+            type: String
         }
     },
     enrolledCourses: [
@@ -81,11 +84,11 @@ const userSchema = new Schema({
     ],
     // Only for teacher
     courses: [
-                {
-                    type: mongoose.Schema.Types.ObjectId,
-                    ref: "Cource"
-                }
-            ],
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Cource"
+        }
+    ],
     tokens: [
         {
             token: {
