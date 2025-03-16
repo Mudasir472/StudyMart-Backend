@@ -23,14 +23,13 @@ router.post("/review/:id",authenticate, async (req, res) => {
         }
         const newReview = new Review({ comment, rating, author: req.user._id })
         await newReview.save()
-        course.reviews.push(newReview);
-        await course.save();
+        await Course.findByIdAndUpdate(id, { $push: { reviews: newReview._id } });
         
-        res.status(200).json({ msg: "Review added successfully", newReview });
+        return res.status(200).json({ msg: "Review added successfully", newReview });
 
     } catch (error) {
         console.error("Error adding review:", error);
-        res.status(500).json({ msg: "Internal server error" });
+        res.status(500).json({ message: "Internal server error" });
     }
 });
 
