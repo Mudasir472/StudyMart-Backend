@@ -73,7 +73,7 @@ const userSchema = new Schema({
             type: String,
         },
         public_id: {
-            type: String
+            type: String,
         }
     },
     enrolledCourses: [

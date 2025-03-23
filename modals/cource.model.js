@@ -24,7 +24,7 @@ const courseSchema = new mongoose.Schema(
             {
                 title: { type: String, required: true },
                 videoPath: { type: String, required: true },
-                public_id: { type: String, required: true }
+                public_id: { type: String, required: false }
             },
         ],
 
@@ -37,7 +37,7 @@ const courseSchema = new mongoose.Schema(
                         ? "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YmVhY2glMjBob3VzZXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60"
                         : v,
             },
-            public_id: { type: String, required: true }
+            public_id: { type: String, required: false }
         }],
         category: {
             type: String,
