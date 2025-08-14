@@ -12,14 +12,11 @@ const authenticate = async (req, res, next) => {
         }
 
         const token = authHeader.split(' ')[1].replace(/['"]+/g, '');
-        console.log(token);
 
         const verifyToken = jwt.verify(token, key);
-        console.log(verifyToken);
 
-
-        const user = await User.findById(verifyToken._id);
-        console.log(user);
+        const user = await User.exists({ _id: verifyToken._id });
+        // const user = await User.findById(verifyToken._id);
 
         if (!user) {
             return res.status(UNAUTHORIZED).json({ error: 'User not found' });

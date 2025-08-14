@@ -103,6 +103,8 @@ const userSchema = new Schema({
 userSchema.methods.generateAuthToken = async function () {
     try {
         let token = jwt.sign({ _id: this._id }, key, { expiresIn: '5d' })
+        console.log(this);
+        
         this.tokens = this.tokens.concat({ token: token })
         await this.save();
         return token;

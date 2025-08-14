@@ -1,6 +1,7 @@
 const { model } = require("mongoose");
 const Course = require("../modals/cource.model");
 const User = require("../modals/user.modal");
+const mongoose = require("mongoose");
 const { NOT_FOUND, UNAUTHORIZED, FORBIDDEN, INTERNAL_SERVER_ERROR } = require("../utils/httpCodeStatus");
 const isCourceOwner = async (req, res, next) => {
     try {
@@ -10,7 +11,7 @@ const isCourceOwner = async (req, res, next) => {
         if (!cource) {
             return res.status(NOT_FOUND).json({ message: "Course not found" });
         }
-        const teacher = await User.findById(req.user._id);
+        const teacher = await User.findById(req.user?._id);
         if (!teacher) {
             return res.status(UNAUTHORIZED).json({ message: "Instructor not found" });
         }

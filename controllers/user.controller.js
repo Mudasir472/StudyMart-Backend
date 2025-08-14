@@ -55,7 +55,7 @@ module.exports.createUser = async (req, res) => {
 
 module.exports.userLogin = async (req, res) => {
     const { email, password, role } = req.body;
-
+    logger.info("User login attempt", { email, role });
     try {
         // Check if the user exists
         const existingUser = await User.findOne({ email });
@@ -67,6 +67,8 @@ module.exports.userLogin = async (req, res) => {
         if (!isPasswordValid) {
             return res.status(UNAUTHORIZED).json({ error: "Invalid credentials" });
         }
+        console.log("Reached here");
+        
         const token = await existingUser.generateAuthToken();  //defined in user modal
 
         // Create token and set cookie
