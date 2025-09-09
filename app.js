@@ -8,14 +8,13 @@ require('dotenv').config();
 
 // Middleware setup
 app.use(cors({
-    origin: ["https://study-mart-a-learning-management-system.vercel.app", "http://localhost:5173"], // React frontend URL
+    origin: ["https://study-mart-a-learning-management-system.vercel.app", "http://localhost:5173","*"], // React frontend URL
     credentials: true,
 }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
-
 app.get('/', (req, res) => {
     res.send("I am listening at 5000");
 })

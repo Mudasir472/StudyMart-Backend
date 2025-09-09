@@ -15,8 +15,8 @@ const authenticate = async (req, res, next) => {
 
         const verifyToken = jwt.verify(token, key);
 
-        const user = await User.exists({ _id: verifyToken._id });
-        // const user = await User.findById(verifyToken._id);
+        // const user = await User.exists({ _id: verifyToken._id });
+        const user = await User.findById(verifyToken._id);
 
         if (!user) {
             return res.status(UNAUTHORIZED).json({ error: 'User not found' });
@@ -26,7 +26,7 @@ const authenticate = async (req, res, next) => {
         next();
     } catch (error) {
         if (error.name === 'TokenExpiredError') {
-            return res.status(UNAUTHORIZED).json({ error: 'Token expired,Please Login First',status:UNAUTHORIZED });
+            return res.status(UNAUTHORIZED).json({ error: 'Token expired,Please Login First', status: UNAUTHORIZED });
         }
         return res.status(UNAUTHORIZED).json({ error: 'Unauthorized: Please Login First' });
     }
