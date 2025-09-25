@@ -2,7 +2,7 @@ const Course = require('../modals/cource.model.js');
 const Cource = require('../modals/cource.model.js');
 const User = require('../modals/user.modal.js');
 const Payment = require("../modals/payment.modal.js");
-const {deleteFromCloudinary} = require('../utils/cloudinaryHelper.js')
+const { deleteFromCloudinary } = require('../utils/cloudinaryHelper.js')
 const mongoose = require('mongoose')
 const { OK, NOT_FOUND, INTERNAL_SERVER_ERROR, CONFLICT, FORBIDDEN, BAD_REQUEST, UNAUTHORIZED } = require('../utils/httpCodeStatus.js');
 
@@ -13,7 +13,7 @@ module.exports.getCource = async (req, res) => {
             path: 'reviews',
             populate: {
                 path: 'author',
-                select: 'firstname image',
+                select: 'fullname image',
             }
         }).populate("instructorId")
 

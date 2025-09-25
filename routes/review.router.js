@@ -5,7 +5,7 @@ const Review = require("../modals/review.modal");
 const Course = require("../modals/cource.model");
 const authenticate = require("../middlewares/authenticate");
 
-router.post("/review/:id",authenticate, async (req, res) => {
+router.post("/review/:id", authenticate, async (req, res) => {
     const { id } = req.params;
 
     const { comment, rating } = req.body;
