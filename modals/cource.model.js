@@ -102,6 +102,16 @@ courseSchema.post("findOneAndDelete", async (cource) => {
             }
         }
     }
+    if (cource) {
+        const materials = await StudyMaterial.find({ courseId: cource._id });
+
+        for (let m of materials) {
+            await cloudinary.uploader.destroy(m.public_id, {
+                resource_type: "raw",
+            });
+        }
+        await StudyMaterial.deleteMany({ courseId: cource._id });
+    }
 });
 
 // Middleware to delete payments when a course is deleted

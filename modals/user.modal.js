@@ -86,8 +86,14 @@ const userSchema = new Schema({
     courses: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Cource"
+            ref: "Course"
         }
+    ],
+    materialUploads: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "StudyMaterial"
+        },
     ],
     tokens: [
         {
@@ -103,7 +109,7 @@ const userSchema = new Schema({
 userSchema.methods.generateAuthToken = async function () {
     try {
         let token = jwt.sign({ _id: this._id }, key, { expiresIn: '5d' })
-        
+
         this.tokens = this.tokens.concat({ token: token })
         await this.save();
         return token;

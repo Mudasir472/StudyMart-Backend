@@ -7,7 +7,6 @@ const isCourceOwner = async (req, res, next) => {
     try {
         const { courseId } = req.params;
         const cource = await Course.findById(courseId);
-
         if (!cource) {
             return res.status(NOT_FOUND).json({ message: "Course not found" });
         }
@@ -22,7 +21,6 @@ const isCourceOwner = async (req, res, next) => {
     } catch (error) {
         console.log(error);
         res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
-
     }
 }
 module.exports = isCourceOwner;

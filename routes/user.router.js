@@ -14,6 +14,8 @@ router.post('/signup', createUser);
 // Route to Login the user
 router.post('/login', userLogin);
 
+
+
 // Route to Login the user
 router.get('/logout', authenticate, userLogout);
 
