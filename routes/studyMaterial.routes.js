@@ -56,8 +56,6 @@ router.get("/:courseId", authenticate, async (req, res) => {
         const { courseId } = req.params;
 
         const course = await Course.findById(courseId);
-        console.log(course);
-
         if (!course)
             return res.status(404).json({ message: "Course not found" });
         // const isInstructor =
@@ -77,6 +75,22 @@ router.get("/:courseId", authenticate, async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+// get materials By teacher
+router.get("/material/teacher", authenticate, async (req, res) => {
+    try {
+        const teacherId = req.user?._id;
+        if (!teacherId) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+        const teacher = await User.findById(teacherId).populate("materialUploads");
+        res.json(teacher.materialUploads);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 router.delete("/:id", authenticate, async (req, res) => {
     const material = await StudyMaterial.findById(req.params.id);
