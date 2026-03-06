@@ -150,7 +150,6 @@ module.exports.createCource = async (req, res) => {
 module.exports.deleteCource = async (req, res) => {
     try {
         const { courseId } = req.params;
-
         const deletedCource = await Cource.findByIdAndDelete(courseId);
         if (!deletedCource) {
             return res.status(NOT_FOUND).json({ message: "Cource not found" });

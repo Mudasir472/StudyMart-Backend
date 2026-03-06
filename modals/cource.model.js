@@ -1,5 +1,5 @@
 const Review = require("../modals/review.modal")
-
+const StudyMaterial = require("../modals/studyMaterial.modal")
 const mongoose = require("mongoose");
 const User = require("./user.modal");
 const Payment = require("./payment.modal");
