@@ -91,18 +91,15 @@ router.get("/material/teacher", authenticate, async (req, res) => {
     }
 });
 
-
 router.delete("/:id", authenticate, async (req, res) => {
     const material = await StudyMaterial.findById(req.params.id);
+
     if (!material) return res.status(404).json({ message: "Not found" });
-
     const course = await Course.findById(material.courseId);
-
     if (course.instructorId.toString() !== req.user._id.toString()) {
         return res.status(403).json({ message: "Unauthorized" });
     }
-
-    // // delete from cloudinary
+    // delete from cloudinary
     // await cloudinary.uploader.destroy(material.public_id, {
     //     resource_type: "raw",
     // });
@@ -110,5 +107,4 @@ router.delete("/:id", authenticate, async (req, res) => {
     await material.deleteOne();
     res.json({ message: "Material deleted" });
 });
-
 module.exports = router;

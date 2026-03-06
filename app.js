@@ -6,9 +6,12 @@ const bodyParser = require("body-parser");
 const { connectdb } = require("./config/MongoDB")
 require('dotenv').config();
 
+const OpenAI = require("openai");
+
+
 // Middleware setup
 app.use(cors({
-    origin: ["https://study-mart-a-learning-management-system.vercel.app", "http://localhost:5173","*"], // React frontend URL
+    origin: ["https://study-mart-a-learning-management-system.vercel.app", "http://localhost:5173", "*"], // React frontend URL
     credentials: true,
 }));
 app.use(bodyParser.json());
@@ -24,11 +27,12 @@ const courceRouter = require("./routes/cource.router")
 const reviewRouter = require("./routes/review.router")
 const instructorRouter = require("./routes/instructor.router")
 const studyMaterialRouter = require("./routes/studyMaterial.routes.js");
-
+const chatRoutes = require("./routes/chat.routes");
 // Mongo connection
 connectdb(process.env.MONGO_URI);
 
 // Routes used
+app.use("/api/ai", chatRoutes);
 app.use("/", userRouter)
 app.use("/", courceRouter)
 app.use("/", reviewRouter)
