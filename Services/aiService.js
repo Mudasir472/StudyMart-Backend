@@ -1,40 +1,48 @@
+
 const axios = require("axios");
 
 const askTutor = async (question) => {
+    try {
 
-    const response = await axios.post(
-        "https://openrouter.ai/api/v1/chat/completions",
-        {
-            model: "meta-llama/llama-3-8b-instruct",
-            messages: [
-                {
-                    role: "system",
-                    content: `
-You are StudyMart AI Tutor.
 
-Rules:
-1. Only answer study related questions (school, college, programming, science, maths, history etc).
-2. If the question is not related to studies, politely refuse.
-3. Reply like this when refusing:
-"I am StudyMart AI Tutor and I only answer study related questions."
-4. Explain answers simply so students can understand.
-`
-                },
-                {
-                    role: "user",
-                    content: question
+        const response = await axios.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            {
+                model: "meta-llama/llama-3.1-8b-instruct",
+                messages: [
+                    {
+                        role: "system",
+                        content: `You are StudyMart AI Tutor.
+Only answer study-related questions.
+Explain answers simply for students.`
+                    },
+                    {
+                        role: "user",
+                        content: question
+                    }
+                ]
+            },
+            {
+                timeout: 30000,
+                headers: {
+                    Authorization:
+                        `Bearer ${process.env.OPENROUTER_API_KEY}`,
+                    "Content-Type": "application/json"
                 }
-            ]
-        },
-        {
-            headers: {
-                Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-                "Content-Type": "application/json"
             }
-        }
-    );
+        );
 
-    return response.data.choices[0].message.content;
+        return response.data.choices[0].message.content;
+
+    } catch (error) {
+        console.error(
+            "OpenRouter error:",
+            error.response?.status,
+            error.response?.data || error.message
+        );
+
+        throw error;
+    }
 };
 
 module.exports = askTutor;

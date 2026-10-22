@@ -1,11 +1,28 @@
 const mongoose = require("mongoose");
 
-const chatSchema = new mongoose.Schema({
-    studentId: String,
-    question: String,
-    answer: String,
-    createdAt: { type: Date, default: Date.now }
-});
+const aiChatSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
 
-const Chat = mongoose.model("Chat", chatSchema);
-module.exports = Chat;
+    title: {
+        type: String,
+        default: "New Chat"
+    },
+
+    messages: [
+        {
+            sender: String,
+            text: String,
+            time: {
+                type: Date,
+                default: Date.now
+            }
+        }
+    ]
+
+}, { timestamps: true });
+
+const ChatCollection = mongoose.model("Chat", aiChatSchema);
+module.exports = ChatCollection;

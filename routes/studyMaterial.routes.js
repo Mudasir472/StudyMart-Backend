@@ -72,6 +72,7 @@ router.get("/:courseId", authenticate, async (req, res) => {
 
         res.status(200).json(materials);
     } catch (err) {
+        console.log(err.message);
         res.status(500).json({ error: err.message });
     }
 });

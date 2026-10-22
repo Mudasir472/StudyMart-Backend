@@ -49,6 +49,7 @@ module.exports.createUser = async (req, res) => {
 
         res.status(OK).json({ message: "User created successfully", result });
     } catch (error) {
+        console.error("Error creating user:", error);
         res.status(INTERNAL_SERVER_ERROR).json({ error: error.message });
     }
 };
@@ -68,7 +69,6 @@ module.exports.userLogin = async (req, res) => {
         }
 
         const token = await existingUser.generateAuthToken();  //defined in user modal
-
         // Create token and set cookie
         res.cookie('jwt', token, {
             expires: new Date(Date.now() + 9000000),
@@ -82,7 +82,6 @@ module.exports.userLogin = async (req, res) => {
 
         res.status(OK).json({ message: "Login successful", result });
     } catch (error) {
-        console.log(error)
         res.status(INTERNAL_SERVER_ERROR).json({ error: error.message });
     }
 }
@@ -241,3 +240,4 @@ module.exports.googleAuth = async (req, res, next) => {
         })
     }
 };
+
