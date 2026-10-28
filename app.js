@@ -19,8 +19,17 @@ connectdb(process.env.MONGO_URI_LOCAL);
 
 // Middleware setup
 app.use(cors({
-    origin: ["https://study-mart-a-learning-management-system.vercel.app", "http://localhost:5173", "*"], // React frontend URL
+    origin: function (origin, callback) {
+        // Allow requests without an Origin header, such as some server-side requests
+        if (!origin || allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+
+        return callback(new Error("Not allowed by CORS: " + origin));
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
 }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -37,7 +46,6 @@ const reviewRouter = require("./routes/review.router")
 const instructorRouter = require("./routes/instructor.router")
 const studyMaterialRouter = require("./routes/studyMaterial.routes.js");
 const chatRoutes = require("./routes/chat.routes");
-
 
 // Routes used
 app.use("/api/ai", chatRoutes);
