@@ -18,9 +18,14 @@ dns.setServers(['8.8.8.8', '8.8.4.4']);
 connectdb(process.env.MONGO_URI_LOCAL);
 
 // Middleware setup
+
+const allowedOrigins = [
+    "https://study-mart-a-learning-management-system.vercel.app",
+    "http://localhost:5173"
+];
+
 app.use(cors({
     origin: function (origin, callback) {
-        // Allow requests without an Origin header, such as some server-side requests
         if (!origin || allowedOrigins.includes(origin)) {
             return callback(null, true);
         }
@@ -31,6 +36,7 @@ app.use(cors({
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
